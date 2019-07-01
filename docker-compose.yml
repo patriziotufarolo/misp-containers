@@ -1,9 +1,54 @@
 version: '3.1'
+
+networks:
+  misp-backend:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: "mispbr0"
+      com.docker.network.enable_ipv6: "false"
+    ipam:
+      config:
+        - subnet: "192.168.66.0/28"
+
+volumes:
+  misp-source:
+
 services:
-  misp-server:
+  misp:
     build: misp
     container_name: misp
     restart: unless-stopped
     volumes:
-      misp-source:/var/www/MISP
+      - misp-source:/var/www/MISP
+    networks:
+      misp-backend:
+        aliases:
+          - misp
+  frontend:
+    build: frontend
+    container_name: frontend
+    restart: unless-stopped
+    volumes:
+      - misp-source:/var/www/MISP
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      misp-backend:
+        aliases:
+          - frontend
+
+  database:
+    build: db
+    container_name: database
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: misp
+      MYSQL_USER: misp
+      MYSQL_PASSWORD: password
+    networks:
+      misp-backend:
+        aliases:
+          - database
 
