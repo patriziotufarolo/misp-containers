@@ -1,0 +1,9 @@
+version: '3.1'
+services:
+  misp-server:
+    build: misp
+    container_name: misp
+    restart: unless-stopped
+    volumes:
+      misp-source:/var/www/MISP
+
