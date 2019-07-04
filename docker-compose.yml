@@ -52,3 +52,12 @@ services:
         aliases:
           - database
 
+  modules:
+    build: modules
+    container_name: misp_modules
+    restart: always
+    networks:
+      misp-backend:
+        aliases:
+          - misp-modules
+
