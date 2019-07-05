@@ -16,6 +16,7 @@ volumes:
 services:
   misp:
     build: misp
+    image: misp
     container_name: misp
     restart: unless-stopped
     volumes:
@@ -26,7 +27,8 @@ services:
           - misp
   frontend:
     build: frontend
-    container_name: frontend
+    image: misp-fe
+    container_name: misp-fe
     restart: unless-stopped
     volumes:
       - misp-source:/var/www/MISP
@@ -40,7 +42,8 @@ services:
 
   database:
     build: db
-    container_name: database
+    image: misp-db
+    container_name: misp-db
     depends_on:
       - misp
     restart: always
@@ -56,7 +59,8 @@ services:
 
   modules:
     build: modules
-    container_name: misp_modules
+    image: misp-modules
+    container_name: misp-modules
     restart: always
     networks:
       misp-backend:
