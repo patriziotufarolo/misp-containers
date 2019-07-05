@@ -41,6 +41,8 @@ services:
   database:
     build: db
     container_name: database
+    depends_on:
+      - misp
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: password
