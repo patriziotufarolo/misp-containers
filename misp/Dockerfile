@@ -1,5 +1,5 @@
 FROM alpine:3.10
-ARG MISP_TAG=2.4.109 
+ARG MISP_TAG=2.4.110 
 RUN apk add --update git
 RUN mkdir /misp
 RUN git clone https://github.com/MISP/MISP.git /misp; cd /misp; git checkout tags/v${MISP_TAG};
@@ -46,14 +46,14 @@ RUN docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd && \
     docker-php-ext-install -j$(nproc) gd mbstring xml bcmath opcache ; \
     pecl install -o -f redis gnupg && rm -rf /tmp/pear &&  docker-php-ext-enable redis
 
-RUN apk del autoconf g++ libtool make gpgme-dev libjpeg-turbo-dev libpng-dev freetype-dev libxml2-dev
+RUN apk del autoconf g++ libtool make 
 
-VOLUME /var/www/MISP
 COPY --from=0 /misp /var/www/MISP
 COPY --from=1 /venv /venv
 RUN     docker-php-ext-install -j$(nproc) pcntl
 RUN     cd /var/www/MISP/app \
-        ;php composer.phar require kamisama/cake-resque:4.1.2 \
+        #;php composer.phar require kamisama/cake-resque:4.1.2 \
+        ;php composer.phar require jeremymcjunkin/cake-resque:4.1.22 \
         ;php composer.phar config vendor-dir Vendor \
         ;php composer.phar install \
         ;chown -R www-data:www-data /var/www/MISP \
@@ -61,4 +61,8 @@ RUN     cd /var/www/MISP/app \
         ;chmod -R g+ws /var/www/MISP/app/tmp \ 
         ;chmod -R g+ws /var/www/MISP/app/files \
         ;chmod -R g+ws /var/www/MISP/app/files/scripts/tmp
+
+#VOLUME /var/www/MISP
 RUN     apk add libmagic
+RUN     apk add bash
+USER    www-data

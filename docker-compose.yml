@@ -17,7 +17,6 @@ services:
   misp:
     build: misp
     image: misp
-    container_name: misp
     restart: unless-stopped
     volumes:
       - misp-source:/var/www/MISP
@@ -28,7 +27,6 @@ services:
   frontend:
     build: frontend
     image: misp-fe
-    container_name: misp-fe
     restart: unless-stopped
     volumes:
       - misp-source:/var/www/MISP
@@ -43,7 +41,6 @@ services:
   database:
     build: db
     image: misp-db
-    container_name: misp-db
     depends_on:
       - misp
     restart: always
@@ -60,10 +57,59 @@ services:
   modules:
     build: modules
     image: misp-modules
-    container_name: misp-modules
     restart: always
     networks:
       misp-backend:
         aliases:
           - misp-modules
+
+
+  redis:
+    image: redis:5
+    restart: always
+    networks:
+      misp-backend:
+        aliases:
+          - redis
+
+
+  worker_default:
+    build: misp
+    image: misp
+    restart: always
+    volumes:
+      - misp-source:/var/www/MISP:rw
+    networks:
+      misp-backend:
+    command: "/bin/sh -c 'cd /var/www/MISP/app/Console/Command && ../cake CakeResque.CakeResque start --interval 5 --queue default --log-handler Console -v -d'" 
+
+  worker_email:
+    build: misp
+    image: misp
+    restart: always
+    volumes:
+      - misp-source:/var/www/MISP:rw
+    networks:
+      misp-backend:
+    command: "/bin/sh -c 'cd /var/www/MISP/app/Console/Command && ../cake CakeResque.CakeResque start --interval 5 --queue email --log-handler Console -v -d'" 
+
+  worker_prio:
+    build: misp
+    image: misp
+    restart: always
+    volumes:
+      - misp-source:/var/www/MISP:rw
+    networks:
+      misp-backend:
+    command: "/bin/sh -c 'cd /var/www/MISP/app/Console/Command && ../cake CakeResque.CakeResque start --interval 5 --queue prio --log-handler Console -v -d'" 
+
+  worker_cache:
+    build: misp
+    image: misp
+    restart: always
+    volumes:
+      - misp-source:/var/www/MISP:rw
+    networks:
+      misp-backend:
+    command: "/bin/sh -c 'cd /var/www/MISP/app/Console/Command && ../cake CakeResque.CakeResque start --interval 5 --queue cache--log-handler Console -v -d'" 
 

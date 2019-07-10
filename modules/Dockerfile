@@ -1,20 +1,12 @@
-FROM python:3.6-alpine3.10
-RUN apk --no-cache add \
-        git \
-        curl \
-        g++ \
-        linux-headers \
-        python3-dev \
-        libjpeg-turbo-dev \
-        tesseract-ocr \
-        imagemagick \
-        ruby-pygments \
-        libpq \
-        zlib-dev \
-        ruby-rdoc
+FROM python:3.6
+RUN apt-get update && apt-get install python3-dev python3-pip libpq5 libjpeg-dev tesseract-ocr libpoppler-cpp-dev imagemagick virtualenv libopencv-dev zbar-tools libzbar0 libzbar-dev libfuzzy-dev git -y
 RUN git clone https://github.com/MISP/misp-modules.git /usr/local/src/misp-modules && \
-    cd /usr/local/src/misp-modules && pip3 install -I -r REQUIREMENTS && pip3 install -I .
-RUN gem install asciidoctor-pdf --pre 
+    cd /usr/local/src/misp-modules && \
+    # sed -i '/^opencv-python/ d'  REQUIREMENTS && \
+    pip3 install -I -r REQUIREMENTS && \
+    pip3 install -I .
+
 EXPOSE 9000
 COPY entrypoint.sh /
+RUN chmod +x /entrypoint.sh
 ENTRYPOINT [ "/entrypoint.sh" ]
