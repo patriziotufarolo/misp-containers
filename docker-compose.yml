@@ -20,6 +20,8 @@ services:
     build: misp
     image: misp
     restart: unless-stopped
+    depends_on:
+      - database
     volumes:
       - misp-source:/var/www/MISP
       - misp-config:/var/www/MISP/app/Config
@@ -42,6 +44,8 @@ services:
     build: frontend
     image: misp-fe
     restart: unless-stopped
+    depends_on:
+      - misp
     volumes:
       - misp-source:/var/www/MISP
       - misp-config:/var/www/MISP/app/Config
@@ -56,8 +60,6 @@ services:
   database:
     build: db
     image: misp-db
-    depends_on:
-      - misp
     restart: always
     env_file: .env
     environment:
@@ -65,6 +67,11 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    #healthcheck:
+    #  test: ["CMD-SHELL", "mysqladmin -u root -p ${MYSQL_ROOT_PASSWORD} ping "]
+    #  interval: 10s
+    #  timeout: 2s
+    #  retries: 5
     networks:
       misp-backend:
         aliases:
@@ -77,16 +84,17 @@ services:
     networks:
       misp-backend:
         aliases:
-          - misp-modules
+          - ${MODULES_CONTAINER_ALIAS}
 
 
   redis:
-    image: redis:5
+    image: redis:latest
     restart: always
     networks:
       misp-backend:
         aliases:
           - redis
+    command: "redis-server --appendonly yes"
 
 
   worker_default:
@@ -149,5 +157,35 @@ services:
     networks:
       misp-backend:
     command: "/bin/sh -c 'cd /var/www/MISP/app/Console/Command && ../cake CakeResque.CakeResque start --interval 5 --queue cache --log-handler Console -v -d'" 
+    env_file:
+      - .worker.env
+
+  worker_scheduler:
+    build: misp
+    image: misp
+    restart: always
+    volumes:
+      - misp-source:/var/www/MISP:rw
+      - misp-config:/var/www/MISP/app/Config
+    depends_on:
+      - misp
+    networks:
+      misp-backend:
+    command: "/bin/sh -c 'cd /var/www/MISP/app/Console/Command && ../cake CakeResque.CakeResque start --interval 5 --queue scheduler --log-handler Console -v -d'" 
+    env_file:
+      - .worker.env
+
+  worker_update:
+    build: misp
+    image: misp
+    restart: always
+    volumes:
+      - misp-source:/var/www/MISP:rw
+      - misp-config:/var/www/MISP/app/Config
+    depends_on:
+      - misp
+    networks:
+      misp-backend:
+    command: "/bin/sh -c 'cd /var/www/MISP/app/Console/Command && ../cake CakeResque.CakeResque start --interval 5 --queue update --log-handler Console -v -d'" 
     env_file:
       - .worker.env

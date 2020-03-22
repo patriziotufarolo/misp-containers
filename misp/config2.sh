@@ -57,14 +57,4 @@ $mispconfig MISP.redis_password "${REDIS_PASSWORD}"
 $mispconfig MISP.live true 
 $mispconfig MISP.manage_workers false
 
-
-$mispconfig Plugin.Enrichment_hover_enable true
-
-for plg in Enrichment Import Export
-do
-$mispconfig Plugin.${plg}_services_enable true
-$mispconfig Plugin.${plg}_services_url http://"${MODULES_CONTAINER_ALIAS:-http://misp-modules}"
-$mispconfig Plugin.${plg}_services_port 6666
-done
-
 php-fpm
