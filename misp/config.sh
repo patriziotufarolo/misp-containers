@@ -33,10 +33,10 @@ sed -i -e 's,\(\t\x27encoding\x27 \?=> \?\)\(.*\)\(\,\),'"\1'${MYSQL_ENCODING:-u
 
 
 echo "Waiting MariaDB to be initialized..."
-sleep 5
+sleep 10
 until database_ready || [ $MAX_TRIES -eq 0 ]; do
-    echo "Not ready..., will do other $((MAX_TRIES--)) attempts..."
-    sleep 5
+    echo "Not ready..., will give $((MAX_TRIES--)) more shots..."
+    sleep 10
 done
 if [ $MAX_TRIES -eq 0 ]
 then
