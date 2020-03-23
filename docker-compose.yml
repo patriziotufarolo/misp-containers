@@ -14,6 +14,7 @@ volumes:
   misp-source:
   misp-config:
   misp-logs:
+  misp-database:
 
 services:
   misp:
@@ -72,6 +73,8 @@ services:
     #  interval: 10s
     #  timeout: 2s
     #  retries: 5
+    volumes:
+      - misp-database:/usr/local/mysql/data/
     networks:
       misp-backend:
         aliases:
