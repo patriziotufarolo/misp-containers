@@ -101,8 +101,9 @@ services:
 
 
   worker_default:
-    build: misp
-    image: misp
+    build: worker
+    image: worker
+    pid: "service:misp"
     restart: always
     volumes:
       - misp-source:/var/www/MISP:rw
@@ -111,14 +112,15 @@ services:
       - misp
     networks:
       misp-backend:
-    command: "/bin/sh -c 'cd /var/www/MISP/app/Console/Command && ../cake CakeResque.CakeResque start --interval 5 --queue default --log-handler Console -v -d'" 
+    command: ["CakeResque.CakeResque", "start", "--interval", "5", "--queue", "default", "--log-handler", "Console", "-v", "-d"] 
     env_file:
       - .worker.env
 
   worker_email:
-    build: misp
-    image: misp
+    build: worker 
+    image: worker
     restart: always
+    pid: "service:misp"
     volumes:
       - misp-source:/var/www/MISP:rw
       - misp-config:/var/www/MISP/app/Config
@@ -126,16 +128,17 @@ services:
       - misp
     networks:
       misp-backend:
-    command: "/bin/sh -c 'cd /var/www/MISP/app/Console/Command && ../cake CakeResque.CakeResque start --interval 5 --queue email --log-handler Console -v -d'" 
+    command: ["CakeResque.CakeResque", "start", "--interval", "5", "--queue", "email", "--log-handler", "Console", "-v", "-d"] 
     env_file:
       - .worker.env
 
 
 
   worker_prio:
-    build: misp
-    image: misp
+    build: worker 
+    image: worker
     restart: always
+    pid: "service:misp"
     volumes:
       - misp-source:/var/www/MISP:rw
       - misp-config:/var/www/MISP/app/Config
@@ -143,15 +146,16 @@ services:
       - misp
     networks:
       misp-backend:
-    command: "/bin/sh -c 'cd /var/www/MISP/app/Console/Command && ../cake CakeResque.CakeResque start --interval 5 --queue prio --log-handler Console -v -d'" 
+    command: ["CakeResque.CakeResque", "start", "--interval", "5", "--queue", "prio", "--log-handler", "Console", "-v", "-d"] 
     env_file:
       - .worker.env
 
 
   worker_cache:
-    build: misp
-    image: misp
+    build: worker 
+    image: worker
     restart: always
+    pid: "service:misp"
     volumes:
       - misp-source:/var/www/MISP:rw
       - misp-config:/var/www/MISP/app/Config
@@ -159,14 +163,15 @@ services:
       - misp
     networks:
       misp-backend:
-    command: "/bin/sh -c 'cd /var/www/MISP/app/Console/Command && ../cake CakeResque.CakeResque start --interval 5 --queue cache --log-handler Console -v -d'" 
+    command: ["CakeResque.CakeResque", "start", "--interval", "5", "--queue", "cache", "--log-handler", "Console", "-v", "-d"] 
     env_file:
       - .worker.env
 
   worker_scheduler:
-    build: misp
-    image: misp
+    build: worker
+    image: worker
     restart: always
+    pid: "service:misp"
     volumes:
       - misp-source:/var/www/MISP:rw
       - misp-config:/var/www/MISP/app/Config
@@ -174,14 +179,15 @@ services:
       - misp
     networks:
       misp-backend:
-    command: "/bin/sh -c 'cd /var/www/MISP/app/Console/Command && ../cake CakeResque.CakeResque start --interval 5 --queue scheduler --log-handler Console -v -d'" 
+    command: ["CakeResque.CakeResque", "start", "--interval", "5", "--queue", "scheduler", "--log-handler", "Console", "-v", "-d"] 
     env_file:
       - .worker.env
 
   worker_update:
-    build: misp
-    image: misp
+    build: worker 
+    image: worker
     restart: always
+    pid: "service:misp"
     volumes:
       - misp-source:/var/www/MISP:rw
       - misp-config:/var/www/MISP/app/Config
@@ -189,6 +195,7 @@ services:
       - misp
     networks:
       misp-backend:
-    command: "/bin/sh -c 'cd /var/www/MISP/app/Console/Command && ../cake CakeResque.CakeResque start --interval 5 --queue update --log-handler Console -v -d'" 
+
+    command: ["CakeResque.CakeResque", "start", "--interval", "5", "--queue", "update", "--log-handler", "Console", "-v", "-d"] 
     env_file:
       - .worker.env

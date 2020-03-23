@@ -41,7 +41,7 @@ RUN apk add --update \
         libmagic \
         gpgme \
         bash \
-        gpgme-dev libjpeg libjpeg-turbo-dev libpng libpng-dev freetype-dev libxml2-dev
+        gpgme-dev libjpeg libjpeg-turbo-dev libpng libpng-dev freetype-dev libxml2-dev procps
 
 ENV SSDEEP ssdeep-2.13
 RUN wget -O /tmp/$SSDEEP.tar.gz https://downloads.sourceforge.net/project/ssdeep/$SSDEEP/$SSDEEP.tar.gz \
