@@ -68,11 +68,6 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    #healthcheck:
-    #  test: ["CMD-SHELL", "mysqladmin -u root -p ${MYSQL_ROOT_PASSWORD} ping "]
-    #  interval: 10s
-    #  timeout: 2s
-    #  retries: 5
     volumes:
       - misp-database:/usr/local/mysql/data/
     networks:
@@ -91,7 +86,7 @@ services:
 
 
   redis:
-    image: redis:latest
+    image: redis:5
     restart: always
     networks:
       misp-backend:
@@ -99,6 +94,15 @@ services:
           - redis
     command: "redis-server --appendonly yes"
 
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    restart: always
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    networks:
+      misp-backend:
+        aliases:
+          - redis-commander
 
   worker_default:
     build: worker

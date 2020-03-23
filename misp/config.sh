@@ -15,11 +15,11 @@ function database_ready() {
 }
 
 cat << EOF >> "$MISP_DIRECTORY/app/Plugin/CakeResque/Config/config.php"
-\$config['CakeResque']['Redis']['host'] = env("REDIS_HOST") ? env("REDIS_HOST") : "localhost"; 
-\$config['CakeResque']['Redis']['port'] = env("REDIS_PORT") ? env("REDIS_PORT") : "6379"; 
-\$config['CakeResque']['Redis']['database'] = env("REDIS_DB") ? env("REDIS_DB") : 0; 
-\$config['CakeResque']['Redis']['namespace'] = env("REDIS_NAMESPACE") ? env("REDIS_NAMESPACE") : "resque"; 
-\$config['CakeResque']['Redis']['password'] = env("REDIS_PASSWORD") ? env("REDIS_PASSWORD") : null; 
+\$config['CakeResque']['Redis']['host'] = "${REDIS_CONTAINER_ALIAS:-redis}"; 
+\$config['CakeResque']['Redis']['port'] = 6379; 
+\$config['CakeResque']['Redis']['database'] = 0; 
+\$config['CakeResque']['Redis']['namespace'] = 'resque'; 
+\$config['CakeResque']['Redis']['password'] = null; 
 EOF
 
 sed -i -e 's,\(\t\x27datasource\x27 \?=> \?\)\(.*\)\(\,\)'",\1\'Database\/Mysql'\3,g" "$CONFIG_DIRECTORY/database.php"
@@ -52,11 +52,10 @@ $mispconfig MISP.baseurl "${MISP_EXTERNAL_BASEURL:-${MISP_BASEURL:-http://misp}}
 $mispconfig MISP.python_bin "/venv/bin/python"
 $mispconfig MISP.redis_host "${REDIS_CONTAINER_ALIAS}" 
 $mispconfig MISP.redis_port 6379 
-$mispconfig MISP.redis_database 1 
+$mispconfig MISP.redis_database 13 
 $mispconfig MISP.redis_password "${REDIS_PASSWORD}"
-$mispconfig MISP.live true 
-$mispconfig MISP.manage_workers false
-
+$mispconfig MISP.live 1
+$mispconfig MISP.manage_workers 0
 
 $mispconfig Plugin.Enrichment_hover_enable true
 
