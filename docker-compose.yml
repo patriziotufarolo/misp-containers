@@ -20,8 +20,6 @@ services:
     build: misp
     image: misp
     restart: unless-stopped
-    depends_on:
-      - database
     volumes:
       - misp-source:/var/www/MISP
       - misp-config:/var/www/MISP/app/Config
@@ -62,6 +60,8 @@ services:
     image: misp-db
     restart: always
     env_file: .env
+    depends_on:
+      - misp
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD} 
       MYSQL_DATABASE: ${MYSQL_DATABASE}
