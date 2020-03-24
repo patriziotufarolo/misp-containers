@@ -53,6 +53,8 @@ services:
     volumes:
       - misp-source:/var/www/MISP
       - misp-config:/var/www/MISP/app/Config
+      - misp-app-files:/var/www/MISP/app/files
+      - misp-app-tmp:/var/www/MISP/app/tmp
     ports:
       - 80:80
       - 443:443
