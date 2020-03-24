@@ -13,6 +13,7 @@ networks:
 volumes:
   misp-source:
   misp-config:
+  misp-cert:
   misp-logs:
   misp-database:
 
@@ -48,6 +49,7 @@ services:
     volumes:
       - misp-source:/var/www/MISP
       - misp-config:/var/www/MISP/app/Config
+      - misp-cert:/etc/pki/tls
     ports:
       - 80:80
       - 443:443
