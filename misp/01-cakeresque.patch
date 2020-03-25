@@ -1,42 +1,63 @@
+diff --git a/Console/Command/CakeResqueShell.php b/Console/Command/CakeResqueShell.php
+index 45d170c..078dd47 100755
 --- a/Console/Command/CakeResqueShell.php
 +++ b/Console/Command/CakeResqueShell.php
-@@ -513,8 +513,7 @@ public function start($args = null, $scheduler = false) {
- 		}
+@@ -514,7 +514,7 @@ class CakeResqueShell extends Shell {
  
  		$pidFile = Configure::read('CakeResque.Resque.tmpdir') . str_replace('.', '', microtime(true));
--
+ 
 -		$cmd = implode(' ', array(
 +		$cmdArray = array(
  			sprintf("nohup %s \\\n", ($this->_runtime['user'] === $this->__getProcessOwner()) ? "" : "sudo -u " . $this->_runtime['user']),
  			sprintf("bash -c \"cd %s; \\\n", escapeshellarg($libraryPath)),
  			implode(' ', $envVars),
-@@ -535,9 +534,17 @@ public function start($args = null, $scheduler = false) {
- 			sprintf("LOGHANDLER=%s \\\n", escapeshellarg($this->_runtime['Log']['handler'])),
- 			sprintf("LOGHANDLERTARGET=%s \\\n", escapeshellarg($this->_runtime['Log']['target'])),
+@@ -537,7 +537,15 @@ class CakeResqueShell extends Shell {
  			sprintf("php %s \\\n", escapeshellarg($resqueBin)),
--			sprintf(">> %s \\\n", escapeshellarg($logFile)),
--			"2>&1\" >/dev/null 2>&1 &"
+ 			sprintf(">> %s \\\n", escapeshellarg($logFile)),
+ 			"2>&1\" >/dev/null 2>&1 &"
 -		));
-+			//sprintf(">> %s \\\n", escapeshellarg($logFile)),
-+			//"2>&1\" >/dev/null 2>&1"
-+			//"2>&1\""
 +		);
-+		if ($this->_runtime['Log']['handler'] !== 'Console') {
-+			$cmdArray[] = sprintf(">> %s \\\n", escapeshellarg($logFile));
-+			$cmdArray[] = "2>&1\" >/dev/null 2>&1";
-+		} else {
-+			$cmdArray[] = "\" 2>&1 &";
-+		}
-+		$cmd = implode(' ', $cmdArray);
++
++        if ($this->_runtime['Log']['handler'] === "Docker") {
++            array_pop($cmdArray);
++            array_pop($cmdArray);
++            array_shift($cmdArray);
++            $cmdArray[] = "2>&1\"";
++        }
++        $cmd = implode(' ', $cmdArray);
  
  		$count = $this->_runtime['workers'];
  
-@@ -548,7 +555,6 @@ public function start($args = null, $scheduler = false) {
+@@ -547,8 +555,18 @@ class CakeResqueShell extends Shell {
+ 			$this->debug(__d('cake_resque', 'Starting worker (' . $i . ')'));
  			$this->debug(__d('cake_resque', 'Running command : ' . "\n\t " . str_replace("\n", "\n\t", $cmd)));
  
- 			$this->_exec($cmd);
--
+-			$this->_exec($cmd);
+ 
++            if ($this->_runtime['Log']['handler'] === "Docker") {
++                $descriptors = [
++                    0 => ['pipe','r'],
++                    1 => ['pipe','w'],
++                    2 => ['pipe','w']
++                ];
++                $proc = proc_open($cmd,$descriptors,$pipes);
++            }
++            else {
++			    $this->_exec($cmd);
++            }
  			$success = false;
  			$attempt = 7;
  
-
+@@ -577,6 +595,12 @@ class CakeResqueShell extends Shell {
+ 
+ 					$ResqueStatus->addWorker($pid, $workerSettings);
+ 
++                    if ($this->_runtime['Log']['handler'] === "Docker") {
++                        while (proc_get_status($proc)['running']) {
++                            $str = fread($pipes[$i], 1024);
++                            if ($str) $this->out($str);
++                        }
++                    }
+ 					break;
+ 				}
+ 			}
