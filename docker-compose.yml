@@ -76,7 +76,7 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
-      - misp-database:/usr/local/mysql/data/
+      - misp-database:/var/lib/mysql
     networks:
       misp-backend:
         aliases:
