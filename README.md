@@ -12,6 +12,7 @@ This image embeds the MISP source code and configuration files and serves them t
 The first stage fetches the MISP source code from MISP Project's GitHub repository, the second stage prepares the Python virtualenv with all MISP's dependencies, while the third and last puts things together with PHP installing also PHP dependencies.
 
 The versions of the software installed are:
+
     - Alpine Linux container 3.10
     - Python 3.7
     - PHP 7.4
@@ -28,10 +29,12 @@ Of course, MISP's worker management is definitively broken within Docker Swarm.
 Patch is available [here](https://github.com/patriziotufarolo/misp-containers/blob/master/misp/01-cakeresque.patch)
 
 I added two plugins for CakePHP and MISP that allow me to:
+
     - Edit configuration scripts in a consistent way through CLI and scripts using MISP's own functions;
     - Verify the readiness of the database service in order to perform some healthchecks wille raising the containers up.
 
 This image is used by the following services:
+
     - misp 
     - worker\_default
     - worker\_email
@@ -46,6 +49,7 @@ Last but not least, the provided docker-compose specifies also the volumes neede
 This image contains all the MISP's enrichment modules and their dependencies.
 
 This image is used by the following services:
+
     - misp-modules
 
 ### Database - *misp-db*
@@ -54,18 +58,21 @@ This image is a plain mariadb database image that, on first startup, is initiali
 The provided docker-compose specifies also the volumes needed to guarantee persistence.
 
 This image is used by the following services:
+
     - database
 
 ### Redis - *redis*
 Basic Redis image from Docker Hub
 
 This image is used by the following services:
+
     - redis
 
 ### Redis-commander - *rediscommander*
 [Redis commander](https://github.com/joeferner/redis-commander) is a Redis web management tool written in Node.JS. I embedded it to look into MISP's redis queues. Feel free to remove it if you don't need it. 
 
 This image is used by the following services:
+
     - redis-commander
 
 ### Frontend - *misp-fe*
@@ -74,6 +81,7 @@ If you don't need redis-commander feel free to remove its definition and rebuild
 This is probably the right place (unless you don't have any alternative architecture) to implement HTTPS.
 
 This image is used by the following services:
+
     - redis-commander
 
 ## Install
