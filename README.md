@@ -101,11 +101,14 @@ $ cd misp-containers
 
 3) Review / customize the `.env` file
 
-4) GO!
+4) Run the docker-compose...
 
 ```
 # docker-compose up -d
 ```
+
+5) ENJOY! (and take a look at the green lights in the Diagnostic page :) )
+
 ### Upgrade procedure for MISP
 
 1) Rebuild the misp and worker images
