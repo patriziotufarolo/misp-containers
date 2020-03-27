@@ -13,11 +13,11 @@ The first stage fetches the MISP source code from MISP Project's GitHub reposito
 
 The versions of the software installed are:
 
-    - Alpine Linux container 3.10
-    - Python 3.7
-    - PHP 7.4
-    - Ssdeep 2.13
-    - Composer 1.10
+- Alpine Linux container 3.10
+- Python 3.7
+- PHP 7.4
+- Ssdeep 2.13
+- Composer 1.10
 
 Some tuning settings for PHP are applied according to MISP's requirements.
 
@@ -30,18 +30,18 @@ Patch is available [here](https://github.com/patriziotufarolo/misp-containers/bl
 
 I added two plugins for CakePHP and MISP that allow me to:
 
-    - Edit configuration scripts in a consistent way through CLI and scripts using MISP's own functions;
-    - Verify the readiness of the database service in order to perform some healthchecks wille raising the containers up.
+- Edit configuration scripts in a consistent way through CLI and scripts using MISP's own functions;
+- Verify the readiness of the database service in order to perform some healthchecks wille raising the containers up.
 
 This image is used by the following services:
 
-    - misp 
-    - worker\_default
-    - worker\_email
-    - worker\_prio
-    - worker\_update
-    - worker\_cache
-    - worker\_scheduler
+- misp 
+- worker\_default
+- worker\_email
+- worker\_prio
+- worker\_update
+- worker\_cache
+- worker\_scheduler
 
 Last but not least, the provided docker-compose specifies also the volumes needed to guarantee persistence.
 
@@ -50,7 +50,7 @@ This image contains all the MISP's enrichment modules and their dependencies.
 
 This image is used by the following services:
 
-    - misp-modules
+- misp-modules
 
 ### Database - *misp-db*
 This image is a plain mariadb database image that, on first startup, is initialized with MISP's database schema, grabbed from the misp image throygh a multi-stage approach.
@@ -59,21 +59,21 @@ The provided docker-compose specifies also the volumes needed to guarantee persi
 
 This image is used by the following services:
 
-    - database
+- database
 
 ### Redis - *redis*
 Basic Redis image from Docker Hub
 
 This image is used by the following services:
 
-    - redis
+- redis
 
 ### Redis-commander - *rediscommander*
 [Redis commander](https://github.com/joeferner/redis-commander) is a Redis web management tool written in Node.JS. I embedded it to look into MISP's redis queues. Feel free to remove it if you don't need it. 
 
 This image is used by the following services:
 
-    - redis-commander
+- redis-commander
 
 ### Frontend - *misp-fe*
 This is basically an Nginx image that serves MISP interacting with php-fpm, and redis-commander under the /redis-commander/ path. 
@@ -82,7 +82,7 @@ This is probably the right place (unless you don't have any alternative architec
 
 This image is used by the following services:
 
-    - redis-commander
+- frontend 
 
 ## Install
 To install MISP using this recipe, by now, you need a machine with **Docker**  and `docker-compose`:
@@ -152,15 +152,15 @@ For the moment I used just the master branch, I will start working with gitflow 
 
 This project is licensed under [MIT License](https://opensource.org/licenses/MIT)
 
-    Copyright (C) 2020 Patrizio Tufarolo
+Copyright (C) 2020 Patrizio Tufarolo
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 MISP is licensed under [GNU Affero General Public License version 3](http://www.gnu.org/licenses/agpl-3.0.html)
 
-    Copyright (C) 2012 Christophe Vandeplas
-    Copyright (C) 2012 Belgian Defence
-    Copyright (C) 2012 NATO / NCIRC
-    Copyright (C) 2013-2019 Andras Iklody
-    Copyright (C) 2015-2019 CIRCL - Computer Incident Response Center Luxembourg
-    Copyright (C) 2016 Andreas Ziegler
+Copyright (C) 2012 Christophe Vandeplas
+Copyright (C) 2012 Belgian Defence
+Copyright (C) 2012 NATO / NCIRC
+Copyright (C) 2013-2019 Andras Iklody
+Copyright (C) 2015-2019 CIRCL - Computer Incident Response Center Luxembourg
+Copyright (C) 2016 Andreas Ziegler
