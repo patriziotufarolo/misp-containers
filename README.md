@@ -150,7 +150,7 @@ For the moment I used just the master branch, I will start working with gitflow 
 
 ## License
 
-This project is licensed under [MIT License](https://opensource.org/licenses/MIT)
+This project is licensed under [MIT License](https://opensource.org/licenses/MIT).
 
 Copyright (C) 2020 Patrizio Tufarolo
 
@@ -159,8 +159,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 MISP is licensed under [GNU Affero General Public License version 3](http://www.gnu.org/licenses/agpl-3.0.html)
 
 Copyright (C) 2012 Christophe Vandeplas
+
 Copyright (C) 2012 Belgian Defence
+
 Copyright (C) 2012 NATO / NCIRC
+
 Copyright (C) 2013-2019 Andras Iklody
+
 Copyright (C) 2015-2019 CIRCL - Computer Incident Response Center Luxembourg
+
 Copyright (C) 2016 Andreas Ziegler
