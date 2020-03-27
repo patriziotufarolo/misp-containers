@@ -2,23 +2,13 @@ version: '3.1'
 
 networks:
   misp-backend:
-    driver: bridge
-    driver_opts:
-      com.docker.network.bridge.name: "mispbr0"
-      com.docker.network.enable_ipv6: "false"
-    ipam:
-      config:
-        - subnet: "192.168.66.0/24"
+    driver: overlay 
 
 volumes:
   misp-source:
   misp-config:
-  misp-certificates:
   misp-logs:
-  misp-app-tmp:
-  misp-app-files:
   misp-database:
-  
 
 services:
   misp:
@@ -28,8 +18,6 @@ services:
     volumes:
       - misp-source:/var/www/MISP
       - misp-config:/var/www/MISP/app/Config
-      - misp-app-files:/var/www/MISP/app/files
-      - misp-app-tmp:/var/www/MISP/app/tmp
     networks:
       misp-backend:
         aliases:
@@ -54,9 +42,6 @@ services:
     volumes:
       - misp-source:/var/www/MISP
       - misp-config:/var/www/MISP/app/Config
-      - misp-certificates:/etc/pki/tls
-      - misp-app-files:/var/www/MISP/app/files
-      - misp-app-tmp:/var/www/MISP/app/tmp
     ports:
       - 80:80
       - 443:443
@@ -78,7 +63,7 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
-      - misp-database:/var/lib/mysql
+      - misp-database:/usr/local/mysql/data/
     networks:
       misp-backend:
         aliases:
