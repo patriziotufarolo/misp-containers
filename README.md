@@ -24,14 +24,14 @@ Some tuning settings for PHP are applied according to MISP's requirements.
 I also patched [CakeResque](https://cakeresque.kamisama.me/) to keep it running in foreground, being compliant with Docker's logging approach.
 This allows me to give to each worker process its own container, and make workers scale through the container engine.
 Since this breaks the native workers management functionality of MISP, within the docker-compose file I decided to share the PID Namespace between workers and MISP services.
-Of course, MISP's worker management is definitively broken within Docker Swarm.
+Of course, MISP's worker management is definitively broken with Docker Swarm.
 
 Patch is available [here](https://github.com/patriziotufarolo/misp-containers/blob/master/misp/01-cakeresque.patch)
 
 I added two plugins for CakePHP and MISP that allow me to:
 
 - Edit configuration scripts in a consistent way through CLI and scripts using MISP's own functions;
-- Verify the readiness of the database service in order to perform some healthchecks wille raising the containers up.
+- Verify the readiness of the database service in order to perform some healthchecks while raising the containers up.
 
 This image is used by the following services:
 
@@ -147,7 +147,7 @@ Further documentation and automation scripts will be provided soon.
 
 ## Want to contribute?
 
-If you are want to contribute to this project feel free to report issues, fork the code, patch it, send pull requests!
+If you want to contribute to this project feel free to report issues, fork the code, patch it, send pull requests!
 
 For the moment I used just the master branch, I will start working with gitflow to implement new features.
 
