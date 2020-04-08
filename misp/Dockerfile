@@ -10,6 +10,7 @@ RUN git config core.filemode false; git submodule update --init --recursive; git
 FROM alpine:3.10
 RUN apk add --update git
 RUN apk add python3 py3-pip python3-dev cython3 gcc g++ autoconf libtool make cmake linux-headers libxml2-dev libxml2 libxslt-dev libmagic bash libffi-dev openssl-dev zeromq-dev cython
+RUN pip3 install --upgrade pip
 RUN pip3 install 'virtualenv<20'
 RUN virtualenv --distribute /venv && virtualenv --relocatable /venv && echo -en "#!/bin/bash\nLD_LIBRARY_PATH=/venv/lib /venv/bin/python \"\$@\"" >  /venv/bin/python-wrapper ; chmod +x /venv/bin/python-wrapper
 COPY --from=0 /misp/requirements.txt /venv/requirements.txt
@@ -77,6 +78,9 @@ RUN     cd /var/www/MISP/app \
         ;chmod -R g+ws /var/www/MISP/app/tmp \ 
         ;chmod -R g+ws /var/www/MISP/app/files \
         ;chmod -R g+ws /var/www/MISP/app/files/scripts/tmp
+RUN echo 'expose_php = 0' >> /usr/local/etc/php/conf.d/docker-php-conf.ini
+RUN echo 'safe_mode = on' >> /usr/local/etc/php/conf.d/docker-php-conf.ini
+RUN echo 'magic_quotes_gpc = off' >> /usr/local/etc/php/conf.d/docker-php-conf.ini
 RUN echo 'memory_limit = 2048M' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini;
 RUN echo 'upload_max_filesize = 50M' >> /usr/local/etc/php/conf.d/docker-php-max-filesize.ini
 RUN echo 'post_max_size = 50M' >> /usr/local/etc/php/conf.d/docker-php-max-filesize.ini
