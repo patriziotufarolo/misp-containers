@@ -95,7 +95,7 @@ services:
 
 
   redis:
-    image: redis:6
+    image: redis:latest
     restart: always
     networks:
       misp-backend:
