@@ -79,7 +79,6 @@ RUN     cd /var/www/MISP/app \
         ;chmod -R g+ws /var/www/MISP/app/files \
         ;chmod -R g+ws /var/www/MISP/app/files/scripts/tmp
 RUN echo 'expose_php = 0' >> /usr/local/etc/php/conf.d/docker-php-conf.ini
-RUN echo 'safe_mode = on' >> /usr/local/etc/php/conf.d/docker-php-conf.ini
 RUN echo 'magic_quotes_gpc = off' >> /usr/local/etc/php/conf.d/docker-php-conf.ini
 RUN echo 'memory_limit = 2048M' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini;
 RUN echo 'upload_max_filesize = 50M' >> /usr/local/etc/php/conf.d/docker-php-max-filesize.ini
