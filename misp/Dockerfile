@@ -42,6 +42,7 @@ RUN apk add --update \
         libmagic \
         gpgme \
         bash \
+        zip \
         gpgme-dev libjpeg libjpeg-turbo-dev libpng libpng-dev freetype-dev libxml2-dev procps
 
 ENV SSDEEP ssdeep-2.13
