@@ -95,12 +95,12 @@ services:
 
 
   redis:
-    image: redis:5
+    image: redis:6
     restart: always
     networks:
       misp-backend:
         aliases:
-          - redis
+          - ${REDIS_CONTAINER_ALIAS}
     command: "redis-server --appendonly yes"
 
   redis-commander:
@@ -111,7 +111,7 @@ services:
     networks:
       misp-backend:
         aliases:
-          - redis-commander
+          - ${REDIS_COMMANDER_CONTAINER_ALIAS}
 
   worker_default:
     build: worker
