@@ -1,5 +1,5 @@
 FROM alpine:3.10
-ARG MISP_TAG=2.4.123
+ARG MISP_TAG=2.4.125
 RUN apk add --update git
 RUN mkdir /misp
 RUN git clone https://github.com/MISP/MISP.git /misp
