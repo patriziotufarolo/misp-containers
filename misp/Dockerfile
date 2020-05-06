@@ -108,4 +108,5 @@ ADD ConfiguratorShell.php /var/www/MISP/app/Plugin/Configurator/Console/Command
 ADD DbConnShell.php /var/www/MISP/app/Plugin/Configurator/Console/Command
 
 WORKDIR "/var/www/MISP"
+ADD exec.sh /
 CMD ["/config.sh"]

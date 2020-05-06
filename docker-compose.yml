@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3.4'
 
 networks:
   misp-backend:
@@ -18,7 +18,25 @@ volumes:
   misp-app-tmp:
   misp-app-files:
   misp-database:
-  
+
+x-worker:
+  &worker-container
+  image: misp:${MISP_VERSION}
+  pid: "service:misp"
+  restart: always
+  volumes:
+    - misp-source:/var/www/MISP:rw
+    - misp-config:/var/www/MISP/app/Config
+    - misp-app-tmp:/var/www/MISP/app/tmp      
+  depends_on:
+    - misp
+  networks:
+    misp-backend:
+  working_dir: "/var/www/MISP/app/Console/Command"
+  entrypoint: "/bin/bash"
+  env_file:
+    - .worker.env
+  command: ["/exec.sh", "../cake", "CakeResque.CakeResque", "start", "--interval", "5", "--queue", "$${queue}", "--log-handler", "Docker"] 
 
 services:
   misp:
@@ -40,13 +58,6 @@ services:
     env_file:
       - .worker.env 
       - .env
-
-  #misp-configurator:
-  #  build: misp-configurator
-  #  image: misp-configurator
-  #  volumes:
-  #    - misp-source:/var/www/MISP
-  #    - misp-config:/var/www/MISP/app/Config
 
   frontend:
     build: frontend
@@ -96,7 +107,6 @@ services:
         aliases:
           - ${MODULES_CONTAINER_ALIAS}
 
-
   redis:
     image: redis:latest
     restart: always
@@ -117,107 +127,31 @@ services:
           - ${REDIS_COMMANDER_CONTAINER_ALIAS}
 
   worker_default:
-    build: worker
-    image: worker
-    pid: "service:misp"
-    restart: always
-    volumes:
-      - misp-source:/var/www/MISP:rw
-      - misp-config:/var/www/MISP/app/Config
-      - misp-app-tmp:/var/www/MISP/app/tmp      
-    depends_on:
-      - misp
-    networks:
-      misp-backend:
-    command: ["CakeResque.CakeResque", "start", "--interval", "5", "--queue", "default", "--log-handler", "Docker", "-v", "-d"] 
-    env_file:
-      - .worker.env
+    << : *worker-container
+    environment:
+      queue: default
 
   worker_email:
-    build: worker 
-    image: worker
-    restart: always
-    pid: "service:misp"
-    volumes:
-      - misp-source:/var/www/MISP:rw
-      - misp-config:/var/www/MISP/app/Config
-      - misp-app-tmp:/var/www/MISP/app/tmp
-    depends_on:
-      - misp
-    networks:
-      misp-backend:
-    command: ["CakeResque.CakeResque", "start", "--interval", "5", "--queue", "email", "--log-handler", "Docker", "-v", "-d"] 
-    env_file:
-      - .worker.env
-
-
+    << : *worker-container
+    environment:
+      queue: email 
 
   worker_prio:
-    build: worker 
-    image: worker
-    restart: always
-    pid: "service:misp"
-    volumes:
-      - misp-source:/var/www/MISP:rw
-      - misp-config:/var/www/MISP/app/Config
-      - misp-app-tmp:/var/www/MISP/app/tmp
-    depends_on:
-      - misp
-    networks:
-      misp-backend:
-    command: ["CakeResque.CakeResque", "start", "--interval", "5", "--queue", "prio", "--log-handler", "Docker", "-v", "-d"] 
-    env_file:
-      - .worker.env
-
+    << : *worker-container
+    environment:
+      queue: prio 
 
   worker_cache:
-    build: worker 
-    image: worker
-    restart: always
-    pid: "service:misp"
-    volumes:
-      - misp-source:/var/www/MISP:rw
-      - misp-config:/var/www/MISP/app/Config
-      - misp-app-tmp:/var/www/MISP/app/tmp
-    depends_on:
-      - misp
-    networks:
-      misp-backend:
-    command: ["CakeResque.CakeResque", "start", "--interval", "5", "--queue", "cache", "--log-handler", "Docker", "-v", "-d"] 
-    env_file:
-      - .worker.env
+    << : *worker-container
+    environment:
+      queue: cache 
 
   worker_scheduler:
-    build: worker
-    image: worker
-    restart: always
-    pid: "service:misp"
-    volumes:
-      - misp-source:/var/www/MISP:rw
-      - misp-config:/var/www/MISP/app/Config
-      - misp-app-tmp:/var/www/MISP/app/tmp
-    depends_on:
-      - misp
-    networks:
-      misp-backend:
-    command: ["CakeResque.CakeResque", "start", "--interval", "5", "--queue", "scheduler", "--log-handler", "Docker", "-v", "-d"] 
-    env_file:
-      - .worker.env
+    << : *worker-container
+    environment:
+      queue: scheduler 
 
   worker_update:
-    build: worker 
-    image: worker
-    restart: always
-    pid: "service:misp"
-    volumes:
-      - misp-source:/var/www/MISP:rw
-      - misp-config:/var/www/MISP/app/Config
-      - misp-app-tmp:/var/www/MISP/app/tmp
-    depends_on:
-      - misp
-    networks:
-      misp-backend:
-
-    command: ["CakeResque.CakeResque", "start", "--interval", "5", "--queue", "update", "--log-handler", "Docker", "-v", "-d"] 
-    env_file:
-      - .worker.env
+    << : *worker-container
+    environment:
+      queue: update
