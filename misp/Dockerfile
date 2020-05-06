@@ -1,9 +1,9 @@
 FROM alpine:3.10
-ARG MISP_TAG=2.4.123
+ARG MISP_TAG=latest
 RUN apk add --update git
 RUN mkdir /misp
 RUN git clone https://github.com/MISP/MISP.git /misp
-#RUN cd /misp; git checkout tags/v${MISP_TAG};
+RUN [ -z $MISP_TAG ] || [ $MISP_TAG != "latest" ] && cd /misp && git checkout tags/v${MISP_TAG} || true;
 WORKDIR /misp
 RUN git config core.filemode false; git submodule update --init --recursive; git submodule update; git submodule foreach git config core.filemode false
 

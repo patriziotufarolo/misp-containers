@@ -22,8 +22,11 @@ volumes:
 
 services:
   misp:
-    build: misp
-    image: misp
+    build:
+      context: ./misp
+      args:
+        MISP_TAG: ${MISP_VERSION}
+    image: misp:${MISP_VERSION}
     restart: unless-stopped
     volumes:
       - misp-source:/var/www/MISP
