@@ -68,7 +68,7 @@ services:
     volumes:
       - misp-source:/var/www/MISP
       - misp-config:/var/www/MISP/app/Config
-      - misp-certificates:/etc/pki/tls
+      - misp-certificates:/etc/nginx/certs
       - misp-app-files:/var/www/MISP/app/files
       - misp-app-tmp:/var/www/MISP/app/tmp
     ports:
