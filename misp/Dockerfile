@@ -45,7 +45,7 @@ RUN apk add --update \
         zip \
         gpgme-dev libjpeg libjpeg-turbo-dev libpng libpng-dev freetype-dev libxml2-dev procps
 
-ENV SSDEEP ssdeep-2.13
+ENV SSDEEP ssdeep-2.14.1
 RUN wget -O /tmp/$SSDEEP.tar.gz https://github.com/ssdeep-project/ssdeep/releases/download/release-2.14.1/$SSDEEP.tar.gz \
   && cd /tmp \
   && tar zxvf $SSDEEP.tar.gz \
