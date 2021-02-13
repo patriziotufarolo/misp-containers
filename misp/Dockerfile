@@ -70,7 +70,7 @@ COPY --from=1 /venv /venv
 RUN     mkdir /var/www/.composer && chown www-data:www-data /var/www/.composer
 RUN     docker-php-ext-install -j$(nproc) pcntl
 RUN     cd /var/www/MISP/app \
-        ;wget https://getcomposer.org/download/1.10.1/composer.phar -O composer.phar \
+        ;wget https://getcomposer.org/composer-stable.phar -O composer.phar \
         ;php composer.phar require kamisama/cake-resque:4.1.2 \
         ;php composer.phar config vendor-dir Vendor \
         ;php composer.phar install \
