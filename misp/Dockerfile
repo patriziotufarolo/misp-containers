@@ -106,6 +106,9 @@ RUN cd /var/www/MISP/app/Plugin/CakeResque/Console/Command; \
     patch CakeResqueShell.php < /tmp/01-cakeresque.patch
 RUN cd /var/www/MISP/app/Model; \
     patch Server.php < /tmp/02-pieexec.patch
+USER    root
+RUN rm -rf /tmp/*
+USER www-data
 
 ADD config.sh /
 RUN ["mkdir", "-p", "/var/www/MISP/app/Plugin/Configurator/Console/Command"]
