@@ -5,13 +5,15 @@
 
 MISP_DIRECTORY="/var/www/MISP"
 CONFIG_DIRECTORY="$MISP_DIRECTORY/app/Config"
-mispconfig="$MISP_DIRECTORY/app/Console/cake Configurator"
+mispcake="$MISP_DIRECTORY/app/Console/cake"
+mispadmin="$mispcake Admin"
+mispconfig="$mispadmin setSetting"
 
 
 MAX_TRIES=5
 
 function database_ready() {
-    [[ $($mispconfig.db_conn | tail -n 1) == 1 ]]
+    [[ $($mispcake Configurator.db_conn | tail -n 1) == 1 ]]
 }
 
 cat << EOF >> "$MISP_DIRECTORY/app/Plugin/CakeResque/Config/config.php"
@@ -65,5 +67,10 @@ $mispconfig Plugin.${plg}_services_enable true
 $mispconfig Plugin.${plg}_services_url http://"${MODULES_CONTAINER_ALIAS:-http://misp-modules}"
 $mispconfig Plugin.${plg}_services_port 6666
 done
-
+$mispadmin runUpdates 
+$mispadmin updateGalaxies
+$mispadmin updateTaxonomies
+$mispadmin updateWarningLists
+$mispadmin updateNoticeLists
+$mispadmin updateObjectTemplates "1337"
 php-fpm

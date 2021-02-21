@@ -43,7 +43,8 @@ RUN apk add --update \
         gpgme \
         bash \
         zip \
-        gpgme-dev libjpeg libjpeg-turbo-dev libpng libpng-dev freetype-dev libxml2-dev procps
+        gpgme-dev libjpeg libjpeg-turbo-dev oniguruma-dev libpng libpng-dev freetype-dev libxml2-dev procps \
+        libzip-dev icu-dev librdkafka-dev brotli-dev
 
 ENV SSDEEP ssdeep-2.14.1
 RUN wget -O /tmp/$SSDEEP.tar.gz https://github.com/ssdeep-project/ssdeep/releases/download/release-2.14.1/$SSDEEP.tar.gz \
@@ -54,14 +55,15 @@ RUN wget -O /tmp/$SSDEEP.tar.gz https://github.com/ssdeep-project/ssdeep/release
   && make -j$(nproc) \
   && make install 
 
+RUN git clone --recursive --depth=1 https://github.com/kjdev/php-ext-brotli.git /tmp/brotli && \
+    cd /tmp/brotli && phpize && ./configure --with-libbrotli && make && make install
 
 RUN docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd && \
-    docker-php-ext-install -j$(nproc) pdo_mysql && \
     docker-php-ext-configure mysqli --with-mysqli=mysqlnd && \
-    docker-php-ext-install -j$(nproc) mysqli && \
     docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/lib && \
-    docker-php-ext-install -j$(nproc) gd mbstring xml bcmath opcache ; \
-    pecl install -o -f redis gnupg ssdeep && rm -rf /tmp/pear &&  docker-php-ext-enable redis && docker-php-ext-enable ssdeep && docker-php-ext-enable gnupg
+    docker-php-ext-install -j$(nproc) gd mbstring xml bcmath opcache mysqli pdo_mysql zip intl bcmath; \
+    pecl install -o -f redis gnupg ssdeep rdkafka && rm -rf /tmp/pear ; \
+    docker-php-ext-enable redis gnupg ssdeep rdkafka brotli
 
 RUN apk del autoconf g++ gcc libc-dev libtool make 
 
@@ -70,7 +72,7 @@ COPY --from=1 /venv /venv
 RUN     mkdir /var/www/.composer && chown www-data:www-data /var/www/.composer
 RUN     docker-php-ext-install -j$(nproc) pcntl
 RUN     cd /var/www/MISP/app \
-        ;wget https://getcomposer.org/download/1.10.1/composer.phar -O composer.phar \
+        ;wget https://getcomposer.org/download/2.0.9/composer.phar -O composer.phar \
         ;php composer.phar require kamisama/cake-resque:4.1.2 \
         ;php composer.phar config vendor-dir Vendor \
         ;php composer.phar install \
@@ -99,12 +101,14 @@ RUN sed -i -e 's, _(, __(,g' /var/www/MISP/app/View/Servers/ajax/submoduleStatus
 USER    www-data
 
 ADD 01-cakeresque.patch /tmp
+ADD 02-pieexec.patch /tmp
 RUN cd /var/www/MISP/app/Plugin/CakeResque/Console/Command; \
     patch CakeResqueShell.php < /tmp/01-cakeresque.patch
+RUN cd /var/www/MISP/app/Model; \
+    patch Server.php < /tmp/02-pieexec.patch
 
 ADD config.sh /
 RUN ["mkdir", "-p", "/var/www/MISP/app/Plugin/Configurator/Console/Command"]
-ADD ConfiguratorShell.php /var/www/MISP/app/Plugin/Configurator/Console/Command
 ADD DbConnShell.php /var/www/MISP/app/Plugin/Configurator/Console/Command
 
 WORKDIR "/var/www/MISP"
