@@ -101,11 +101,8 @@ RUN sed -i -e 's, _(, __(,g' /var/www/MISP/app/View/Servers/ajax/submoduleStatus
 USER    www-data
 
 ADD 01-cakeresque.patch /tmp
-ADD 02-pieexec.patch /tmp
 RUN cd /var/www/MISP/app/Plugin/CakeResque/Console/Command; \
     patch CakeResqueShell.php < /tmp/01-cakeresque.patch
-RUN cd /var/www/MISP/app/Model; \
-    patch Server.php < /tmp/02-pieexec.patch
 USER    root
 RUN rm -rf /tmp/*
 USER www-data
