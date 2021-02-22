@@ -11,7 +11,6 @@ networks:
         - subnet: "192.168.66.0/24"
 
 volumes:
-  misp-source:
   misp-config:
   misp-certificates:
   misp-logs:
@@ -25,7 +24,6 @@ x-worker:
   pid: "service:misp"
   restart: always
   volumes:
-    - misp-source:/var/www/MISP:rw
     - misp-config:/var/www/MISP/app/Config
     - misp-app-tmp:/var/www/MISP/app/tmp      
   depends_on:
@@ -47,7 +45,6 @@ services:
     image: misp:${MISP_VERSION}
     restart: unless-stopped
     volumes:
-      - misp-source:/var/www/MISP
       - misp-config:/var/www/MISP/app/Config
       - misp-app-files:/var/www/MISP/app/files
       - misp-app-tmp:/var/www/MISP/app/tmp
@@ -66,7 +63,6 @@ services:
     depends_on:
       - misp
     volumes:
-      - misp-source:/var/www/MISP
       - misp-config:/var/www/MISP/app/Config
       - misp-certificates:/etc/pki/tls
       - misp-app-files:/var/www/MISP/app/files
