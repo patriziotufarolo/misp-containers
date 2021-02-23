@@ -30,7 +30,7 @@ RUN . /venv/bin/activate \
 RUN . /venv/bin/activate && git clone https://github.com/lief-project/LIEF /tmp/lief && cd /tmp/lief && python setup.py build_ext -j$(nproc) && python setup.py install
 RUN . /venv/bin/activate && pip install maec stix2 git+https://github.com/CybOXProject/python-cybox
 
-FROM php:7.4-fpm-alpine3.10
+FROM php:7.4-fpm-alpine3.10 AS misp
 RUN apk add --update \
 		autoconf \
 		g++ \
@@ -112,5 +112,14 @@ RUN ["mkdir", "-p", "/var/www/MISP/app/Plugin/Configurator/Console/Command"]
 ADD DbConnShell.php /var/www/MISP/app/Plugin/Configurator/Console/Command
 
 WORKDIR "/var/www/MISP"
-ADD exec.sh /
+ADD worker-exec.sh /
 CMD ["/config.sh"]
+
+FROM nginx:stable-alpine as frontend
+COPY nginx/misp.conf /etc/nginx/conf.d/misp.conf
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
+RUN rm /etc/nginx/conf.d/default.conf
+RUN rm -rf /usr/share/nginx/html
+COPY --from=misp /var/www/MISP/app/webroot /usr/share/nginx/html
+
+FROM misp

@@ -25,7 +25,8 @@ x-worker:
   restart: always
   volumes:
     - misp-config:/var/www/MISP/app/Config
-    - misp-app-tmp:/var/www/MISP/app/tmp      
+    - misp-app-files:/var/www/MISP/app/files
+    - misp-app-tmp:/var/www/MISP/app/tmp
   depends_on:
     - misp
   networks:
@@ -34,7 +35,7 @@ x-worker:
   entrypoint: "/bin/bash"
   env_file:
     - .worker.env
-  command: ["/exec.sh", "../cake", "CakeResque.CakeResque", "start", "--interval", "5", "--queue", "$${queue}", "--log-handler", "Docker"] 
+  command: ["/worker-exec.sh", "../cake", "CakeResque.CakeResque", "start", "--interval", "5", "--queue", "$${queue}", "--log-handler", "Docker"] 
 
 services:
   misp:
@@ -42,6 +43,7 @@ services:
       context: ./misp
       args:
         MISP_TAG: ${MISP_VERSION}
+      target: misp
     image: misp:${MISP_VERSION}
     restart: unless-stopped
     volumes:
@@ -57,16 +59,18 @@ services:
       - .env
 
   frontend:
-    build: frontend
+    build:
+      context: ./misp
+      args:
+        MISP_TAG: ${MISP_VERSION}
+      target: frontend 
+
     image: misp-fe
     restart: unless-stopped
     depends_on:
       - misp
     volumes:
-      - misp-config:/var/www/MISP/app/Config
       - misp-certificates:/etc/pki/tls
-      - misp-app-files:/var/www/MISP/app/files
-      - misp-app-tmp:/var/www/MISP/app/tmp
     ports:
       - 80:80
       - 443:443
